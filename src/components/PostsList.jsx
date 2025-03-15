@@ -5,32 +5,31 @@ import classes from "./PostsList.module.css";
 import Modal from "./Modal";
 
 export default function PostsList({ isposting, onStopPosting }) {
-  const [entereBody, setEntereBody] = useState("");
-  const [enteredAuyhor, setEnteredAuyhor] = useState("");
+  const [posts, setPosts] = useState([]);
 
-  function bodyChangeHandler(event) {
-    setEntereBody(event.target.value);
-  }
-
-  function authorChangeHandler(event) {
-    setEnteredAuyhor(event.target.value);
+  function addPostHandler(postData) {
+    setPosts((prevPosts) => [...prevPosts, postData]);
   }
   return (
     <>
       {isposting && (
         <Modal onClose={onStopPosting}>
-          <NewPost
-            onBodyChange={bodyChangeHandler}
-            onAuthorChange={authorChangeHandler}
-            onCancel={onStopPosting}
-          />
+          <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
         </Modal>
       )}
-
-      <ul className={classes.posts}>
-        <Post author={enteredAuyhor} body={entereBody} />
-        <Post author="Manuel" body="Check out the full course!" />
-      </ul>
+      {posts.length > 0 && (
+        <ul className={classes.posts}>
+          {posts.map((post) => (
+            <Post key={post.body} author={post.author} body={post.body} />
+          ))}
+        </ul>
+      )}
+      {posts.length === 0 && (
+        <div style={{ textAlign: "center", color: "white" }}>
+          <h2>No posts yet.</h2>
+          <p>Start adding some!</p>
+        </div>
+      )}
     </>
   );
 }
